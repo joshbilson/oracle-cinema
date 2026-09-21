@@ -22,6 +22,10 @@ The default server address is compiled into the app, but contains no credentials
 
 The fork has no upstream Expo update URL, publishing identity or push project ID. Remote push registration is enabled only when our own Expo project is configured. Local download notifications remain supported.
 
+## Xcode 27 compatibility
+
+This fork includes a CocoaPods deployment-target adjustment for older resource bundles, a small Expo Modules JSI patch preserving nullable C callbacks, and an iOS scene-lifecycle config plugin. The scene plugin keeps normal and universal links plus Expo lifecycle callbacks connected. These changes are applied by `bun install` and Expo prebuild; keep the pinned dependencies when rebuilding.
+
 ## Server
 
 Connect to a Jellyfin server using HTTPS. Oracle's deployment uses private Tailscale HTTPS, so the device must be connected to the same tailnet. Movie and TV libraries live on Oracle, not on this Mac. Seerr and the Streamyfin companion plugin supply request discovery and login integration.

@@ -130,6 +130,7 @@
       ],
       "expo-web-browser",
       ["./plugins/with-runtime-framework-headers.js"],
+      ["./plugins/withOracleScenes.js"],
       ["./plugins/withChangeNativeAndroidTextToWhite.js"],
       ["./plugins/withAndroidAlertColors.js"],
       ["./plugins/withAndroidManifest.js"],
