@@ -30,6 +30,10 @@ This fork includes a CocoaPods deployment-target adjustment for older resource b
 
 Connect to a Jellyfin server using HTTPS. Oracle's deployment uses private Tailscale HTTPS, so the device must be connected to the same tailnet. Movie and TV libraries live on Oracle, not on this Mac. Seerr and the Streamyfin companion plugin supply request discovery and login integration.
 
+Oracle uses Radarr for movies, Sonarr for television and an isolated qBittorrent instance for downloads. Completed imports refresh Jellyfin, and Seerr checks recent library additions every minute. The default request quality profile permits 720p and 1080p. The initial integration catalogue contains only two openly downloadable test titles; a general media source must be configured separately.
+
+The Seerr 3.4.1 deployment includes the [episode availability patch](server-patches/README.md), which makes recent episode and season additions update request availability. Keep this patch when rebuilding that server version; do not apply it blindly to a newer release.
+
 ## Licence and credits
 
 Streamyfin and this fork's covered source files are licensed under MPL-2.0. See `LICENSE.txt`. Original copyright and licence notices are preserved. When distributing this app outside the organisation, make the corresponding MPL-covered source, including modifications, available to recipients via the repository above. Third-party components retain their own licences and notices. The native video player includes GPL-3.0 MPVKit; its source and licence are available at https://github.com/mpv-ios/MPVKit/tree/0.41.0-av.

@@ -1,0 +1,103 @@
+diff --git a/server/lib/scanners/jellyfin/index.ts b/server/lib/scanners/jellyfin/index.ts
+index 64faab6..01b6116 100644
+--- a/server/lib/scanners/jellyfin/index.ts
++++ b/server/lib/scanners/jellyfin/index.ts
+@@ -446,7 +446,7 @@ class JellyfinScanner
+   private async processItem(item: JellyfinLibraryItem): Promise<void> {
+     if (item.Type === 'Movie') {
+       await this.processJellyfinMovie(item);
+-    } else if (item.Type === 'Series') {
++    } else if (['Series', 'Season', 'Episode'].includes(item.Type)) {
+       await this.processJellyfinShow(item);
+     }
+   }
+diff --git a/server/lib/scanners/jellyfin/jellyfin.test.ts b/server/lib/scanners/jellyfin/jellyfin.test.ts
+index 51f97d0..9674070 100644
+--- a/server/lib/scanners/jellyfin/jellyfin.test.ts
++++ b/server/lib/scanners/jellyfin/jellyfin.test.ts
+@@ -99,7 +99,21 @@ Object.defineProperty(TheMovieDb.prototype, 'getTvShow', {
+   configurable: true,
+ });
+ 
+-import { jellyfinFullScanner } from '@server/lib/scanners/jellyfin';
++import {
++  jellyfinFullScanner,
++  jellyfinRecentScanner,
++} from '@server/lib/scanners/jellyfin';
++
++let getRecentlyAddedImpl: (
++  id: string
++) => Promise<JellyfinLibraryItem[]> = async () => [];
++Object.defineProperty(JellyfinAPI.prototype, 'getRecentlyAdded', {
++  get() {
++    return async (id: string) => getRecentlyAddedImpl(id);
++  },
++  set() {},
++  configurable: true,
++});
+ 
+ setupTestDb();
+ 
+@@ -224,6 +238,7 @@ function configureJellyfinWithLibrary(
+ describe('Jellyfin Scanner', () => {
+   beforeEach(async () => {
+     getLibraryContentsImpl = async () => [];
++    getRecentlyAddedImpl = async () => [];
+     getItemDataImpl = async () => undefined;
+     getSeasonsImpl = async () => [];
+     getEpisodesImpl = async () => [];
+@@ -243,6 +258,54 @@ describe('Jellyfin Scanner', () => {
+     }
+   });
+ 
++  describe('recent episode availability regression', () => {
++    for (const itemType of ['Episode', 'Season'] as const) {
++      it(`updates a processing request when the latest item is a ${itemType}`, async () => {
++        configureJellyfinWithLibrary();
++        const repository = getRepository(Media);
++        const media = new Media();
++        media.tmdbId = 8800;
++        media.mediaType = MediaType.TV;
++        media.status = MediaStatus.PROCESSING;
++        media.seasons = [
++          new Season({
++            seasonNumber: 1,
++            status: MediaStatus.PROCESSING,
++            status4k: MediaStatus.UNKNOWN,
++          }),
++        ];
++        await repository.save(media);
++        getRecentlyAddedImpl = async () => [
++          {
++            ...fakeJellyfinSeriesItem('jf-recent-item'),
++            Type: itemType,
++            SeriesId: 'jf-recent-show',
++          },
++        ];
++        getItemDataImpl = async (id) =>
++          id === 'jf-recent-show'
++            ? fakeJellyfinShowMetadata('jf-recent-show', '8800')
++            : undefined;
++        getTvShowImpl = async () => fakeTmdbShow(8800);
++        getSeasonsImpl = async () => [
++          fakeJellyfinSeason(1, 'jf-recent-season'),
++        ];
++        getEpisodesImpl = async () => fakeJellyfinEpisodes(1);
++        await jellyfinRecentScanner.run();
++        const updated = await repository.findOneOrFail({
++          where: { tmdbId: 8800 },
++          relations: ['seasons'],
++        });
++        assert.equal(updated.status, MediaStatus.PARTIALLY_AVAILABLE);
++        assert.equal(updated.jellyfinMediaId, 'jf-recent-show');
++        assert.equal(
++          updated.seasons[0].status,
++          MediaStatus.PARTIALLY_AVAILABLE
++        );
++      });
++    }
++  });
++
+   describe('empty TMDB season handling', () => {
+     it('should mark show as available when all non-empty TMDB seasons are fully scanned and an empty placeholder season exists in the DB', async () => {
+       configureJellyfinWithLibrary();
