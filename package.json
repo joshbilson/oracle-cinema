@@ -1,9 +1,9 @@
 {
-  "name": "streamyfin",
+  "name": "oracle-cinema",
   "main": "./index",
   "version": "1.0.0",
   "scripts": {
-    "submodule-reload": "git submodule update --init --remote --recursive",
+    "submodule-reload": "git submodule update --init --recursive",
     "clean": "echo y | expo prebuild --clean",
     "start": "bun run submodule-reload && expo start",
     "prebuild": "cross-env EXPO_TV=0 bun run clean",

@@ -191,7 +191,7 @@ public class BackgroundDownloaderModule: Module {
     print("[BackgroundDownloader] Initializing URLSession")
     
     let config = URLSessionConfiguration.background(
-      withIdentifier: "com.fredrikburmester.streamyfin.backgrounddownloader"
+      withIdentifier: "\(Bundle.main.bundleIdentifier ?? "app.oracle.cinema").backgrounddownloader"
     )
     config.allowsCellularAccess = true
     config.sessionSendsLaunchEvents = true

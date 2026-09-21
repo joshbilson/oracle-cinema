@@ -11,7 +11,7 @@ const KEYCHAIN_ACCESS_GROUP_INFO_PLIST_KEY =
   "StreamyfinKeychainAccessGroupIdentifier";
 
 function getBundleIdentifier(config) {
-  return config.ios?.bundleIdentifier || "com.fredrikburmester.streamyfin";
+  return config.ios?.bundleIdentifier || "app.oracle.cinema";
 }
 
 function getAppGroupIdentifier(config) {

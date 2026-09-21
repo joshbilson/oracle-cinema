@@ -102,7 +102,7 @@
     "suggested_movies": "Filmförslag",
     "suggested_episodes": "Föreslagna avsnitt",
     "intro": {
-      "welcome_to_streamyfin": "Välkommen till Streamyfin",
+      "welcome_to_streamyfin": "Välkommen till Oracle Cinema",
       "a_free_and_open_source_client_for_jellyfin": "En gratis klient för Jellyfin med öppen källkod.",
       "features_title": "Funktioner",
       "features_description": "Streamyfin har en massa funktioner och integrerar med ett brett utbud av programvara som du kan hitta i inställningsmenyn, dessa inkluderar:",
@@ -181,7 +181,9 @@
         "user": "Användare",
         "server": "Server",
         "token": "Användarkod",
-        "app_version": "Appversion"
+        "app_version": "Appversion",
+        "source_code": "Källkod",
+        "based_on": "Baserad på"
       },
       "quick_connect": {
         "quick_connect_title": "Snabbanslutning",
@@ -1030,7 +1032,7 @@
     "pair_with_phone_title": "Login TV",
     "pair_with_phone_description": "Scan the QR code displayed on your TV to log in",
     "waiting_for_phone": "Waiting for phone...",
-    "scan_with_phone": "Scan with the Streamyfin app on your phone",
+    "scan_with_phone": "Scan with the Oracle Cinema app on your phone",
     "logging_in": "Logging in...",
     "logging_in_description": "Connecting to your server"
   }

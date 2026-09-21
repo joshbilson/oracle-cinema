@@ -117,6 +117,7 @@ export class JellyseerrApi {
   constructor(baseUrl: string) {
     this.axios = axios.create({
       baseURL: baseUrl,
+      timeout: 15000,
       withCredentials: true,
       withXSRFToken: true,
       xsrfHeaderName: "XSRF-TOKEN",

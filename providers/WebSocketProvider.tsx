@@ -214,10 +214,9 @@ export const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
       try {
         await getSessionApi(api).postFullCapabilities({
           clientCapabilitiesDto: {
-            AppStoreUrl:
-              "https://apps.apple.com/us/app/streamyfin/id6593660679",
+            AppStoreUrl: "https://github.com/joshbilson/oracle-cinema",
             IconUrl:
-              "https://raw.githubusercontent.com/retardgerman/streamyfinweb/refs/heads/main/public/assets/images/icon_new_withoutBackground.png",
+              "https://raw.githubusercontent.com/joshbilson/oracle-cinema/oracle-cinema/assets/oracle/icon.png",
             PlayableMediaTypes: ["Audio", "Video"],
             SupportedCommands: ["Play"],
             SupportsMediaControl: true,

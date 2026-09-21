@@ -1,7 +1,8 @@
 import * as Application from "expo-application";
 import { useAtom } from "jotai";
 import { useTranslation } from "react-i18next";
-import { View, type ViewProps } from "react-native";
+import { Linking, View, type ViewProps } from "react-native";
+import { APP_NAME } from "@/constants/Brand";
 import { apiAtom, userAtom } from "@/providers/JellyfinProvider";
 import { ListGroup } from "../list/ListGroup";
 import { ListItem } from "../list/ListItem";
@@ -30,12 +31,24 @@ export const UserInfo: React.FC<Props> = ({ ...props }) => {
           value={api?.basePath}
         />
         <ListItem
-          title={t("home.settings.user_info.token")}
-          value={api?.accessToken}
-        />
-        <ListItem
           title={t("home.settings.user_info.app_version")}
           value={version}
+        />
+        <ListItem
+          title={t("home.settings.user_info.source_code")}
+          value={APP_NAME}
+          onPress={() =>
+            Linking.openURL("https://github.com/joshbilson/oracle-cinema")
+          }
+          showArrow
+        />
+        <ListItem
+          title={t("home.settings.user_info.based_on")}
+          value='Streamyfin · MPL-2.0'
+          onPress={() =>
+            Linking.openURL("https://github.com/streamyfin/streamyfin")
+          }
+          showArrow
         />
       </ListGroup>
     </View>

@@ -102,10 +102,10 @@
     "suggested_movies": "Suggested Movies",
     "suggested_episodes": "Suggested Episodes",
     "intro": {
-      "welcome_to_streamyfin": "Welcome to Streamyfin",
+      "welcome_to_streamyfin": "Welcome to Oracle Cinema",
       "a_free_and_open_source_client_for_jellyfin": "A Free and Open-Source Client for Jellyfin.",
       "features_title": "Features",
-      "features_description": "Streamyfin has a bunch of features and integrates with a wide array of software which you can find in the settings menu, these include:",
+      "features_description": "Oracle Cinema has a bunch of features and integrates with a wide array of software which you can find in the settings menu, these include:",
       "jellyseerr_feature_description": "Connect to your Seerr instance and request movies directly in the app.",
       "downloads_feature_title": "Downloads",
       "downloads_feature_description": "Download movies and tv-shows to view offline. Use either the default method or install the optimize server to download files in the background.",
@@ -181,7 +181,9 @@
         "user": "User",
         "server": "Server",
         "token": "Token",
-        "app_version": "App Version"
+        "app_version": "App Version",
+        "source_code": "Source code",
+        "based_on": "Based on"
       },
       "quick_connect": {
         "quick_connect_title": "Quick Connect",
@@ -1030,7 +1032,7 @@
     "pair_with_phone_title": "Login TV",
     "pair_with_phone_description": "Scan the QR code displayed on your TV to log in",
     "waiting_for_phone": "Waiting for phone...",
-    "scan_with_phone": "Scan with the Streamyfin app on your phone",
+    "scan_with_phone": "Scan with the Oracle Cinema app on your phone",
     "logging_in": "Logging in...",
     "logging_in_description": "Connecting to your server"
   }

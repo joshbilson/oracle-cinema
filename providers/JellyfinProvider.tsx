@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import { AppState, Platform } from "react-native";
 import { getDeviceNameSync } from "react-native-device-info";
 import uuid from "react-native-uuid";
+import { APP_NAME, APP_VERSION } from "@/constants/Brand";
 import useRouter from "@/hooks/useAppRouter";
 import { useInterval } from "@/hooks/useInterval";
 import { JellyseerrApi, useJellyseerr } from "@/hooks/useJellyseerr";
@@ -53,7 +54,7 @@ const initialApi = (() => {
       const id = getOrSetDeviceId();
       const deviceName = getDeviceNameSync();
       const jellyfinInstance = new Jellyfin({
-        clientInfo: { name: "Streamyfin", version: "0.54.1" },
+        clientInfo: { name: APP_NAME, version: APP_VERSION },
         deviceInfo: {
           name: deviceName,
           id,
@@ -135,7 +136,7 @@ export const JellyfinProvider: React.FC<{ children: ReactNode }> = ({
       const id = getOrSetDeviceId();
       const deviceName = getDeviceNameSync();
       return new Jellyfin({
-        clientInfo: { name: "Streamyfin", version: "0.54.1" },
+        clientInfo: { name: APP_NAME, version: APP_VERSION },
         deviceInfo: {
           name: deviceName,
           id,
@@ -167,9 +168,9 @@ export const JellyfinProvider: React.FC<{ children: ReactNode }> = ({
   const headers = useMemo(() => {
     if (!deviceId) return {};
     return {
-      authorization: `MediaBrowser Client="Streamyfin", Device=${
+      authorization: `MediaBrowser Client="${APP_NAME}", Device=${
         Platform.OS === "android" ? "Android" : "iOS"
-      }, DeviceId="${deviceId}", Version="0.54.1"`,
+      }, DeviceId="${deviceId}", Version="${APP_VERSION}"`,
     };
   }, [deviceId]);
 
@@ -356,11 +357,20 @@ export const JellyfinProvider: React.FC<{ children: ReactNode }> = ({
             const jellyseerrApi = new JellyseerrApi(
               recentPluginSettings.jellyseerrServerUrl.value,
             );
-            await jellyseerrApi.test().then((result) => {
-              if (result.isValid && result.requiresPass) {
-                jellyseerrApi.login(username, password).then(setJellyseerrUser);
-              }
-            });
+            // Requests are optional: an unavailable Seerr server must not
+            // prevent a successful Jellyfin login or produce an unhandled rejection.
+            void jellyseerrApi
+              .test()
+              .then(async (result) => {
+                if (result.isValid && result.requiresPass) {
+                  setJellyseerrUser(
+                    await jellyseerrApi.login(username, password),
+                  );
+                }
+              })
+              .catch(() => {
+                writeErrorLog("Could not sign in to the request service");
+              });
           }
         }
       } catch (error) {

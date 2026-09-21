@@ -22,6 +22,7 @@ import { Text } from "@/components/common/Text";
 import JellyfinServerDiscovery from "@/components/JellyfinServerDiscovery";
 import { PreviousServersList } from "@/components/PreviousServersList";
 import { SaveAccountModal } from "@/components/SaveAccountModal";
+import { APP_NAME, DEFAULT_SERVER_URL } from "@/constants/Brand";
 import { Colors } from "@/constants/Colors";
 import { apiAtom, useJellyfin } from "@/providers/JellyfinProvider";
 import type {
@@ -54,7 +55,9 @@ export const Login: React.FC = () => {
 
   const [loadingServerCheck, setLoadingServerCheck] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [serverURL, setServerURL] = useState<string>(_apiUrl || "");
+  const [serverURL, setServerURL] = useState<string>(
+    _apiUrl || DEFAULT_SERVER_URL,
+  );
   const [serverName, setServerName] = useState<string>("");
   const [credentials, setCredentials] = useState<{
     username: string;
@@ -395,9 +398,9 @@ export const Login: React.FC = () => {
                   marginLeft: -23,
                   marginBottom: -20,
                 }}
-                source={require("@/assets/images/icon-ios-plain.png")}
+                source={require("@/assets/oracle/icon.png")}
               />
-              <Text className='text-3xl font-bold'>Streamyfin</Text>
+              <Text className='text-3xl font-bold'>{APP_NAME}</Text>
               <Text className='text-neutral-500'>
                 {t("server.enter_url_to_jellyfin_server")}
               </Text>

@@ -136,8 +136,8 @@ function sectionFromItems(
         title: getTVDiscoveryTitle(item),
         subtitle: getTVDiscoverySubtitle(item),
         imageUrl: image?.url,
-        route: `streamyfin://topshelf/item?id=${encodeURIComponent(item.Id!)}&type=${encodeURIComponent(item.Type || "")}`,
-        playRoute: `streamyfin://topshelf/play?id=${encodeURIComponent(item.Id!)}`,
+        route: `oraclecinema://topshelf/item?id=${encodeURIComponent(item.Id!)}&type=${encodeURIComponent(item.Type || "")}`,
+        playRoute: `oraclecinema://topshelf/play?id=${encodeURIComponent(item.Id!)}`,
       };
     });
 

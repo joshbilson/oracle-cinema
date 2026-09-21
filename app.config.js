@@ -11,7 +11,7 @@ module.exports = ({ config }) => {
       "expo-camera",
       {
         cameraPermission:
-          "Allow Streamyfin to access the camera to scan QR codes for TV login.",
+          "Allow Oracle Cinema to access the camera to scan QR codes for TV login.",
       },
     ]);
   }
@@ -21,6 +21,8 @@ module.exports = ({ config }) => {
   if (process.env.GOOGLE_SERVICES_JSON) {
     androidConfig.googleServicesFile = process.env.GOOGLE_SERVICES_JSON;
   }
+
+  config.ios.appleTeamId = process.env.ORACLE_APPLE_TEAM_ID || undefined;
 
   return {
     ...(Object.keys(androidConfig).length > 0 && { android: androidConfig }),

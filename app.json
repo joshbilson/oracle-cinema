@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Streamyfin",
-    "slug": "streamyfin",
-    "version": "0.54.1",
+    "name": "Oracle Cinema",
+    "slug": "oracle-cinema",
+    "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/images/icon.png",
-    "scheme": "streamyfin",
+    "icon": "./assets/oracle/icon.png",
+    "scheme": "oraclecinema",
     "userInterfaceStyle": "dark",
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -15,7 +15,7 @@
         "NSMicrophoneUsageDescription": "The app needs access to your microphone.",
         "UIBackgroundModes": ["audio", "fetch"],
         "NSLocalNetworkUsageDescription": "The app needs access to your local network to connect to your Jellyfin server.",
-        "NSLocationWhenInUseUsageDescription": "Streamyfin uses your location to detect your home WiFi network for automatic local server switching.",
+        "NSLocationWhenInUseUsageDescription": "Oracle Cinema uses your location to detect your home WiFi network for automatic local server switching.",
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
@@ -31,25 +31,23 @@
       "entitlements": {
         "com.apple.developer.networking.wifi-info": true
       },
-      "bundleIdentifier": "com.fredrikburmester.streamyfin",
-      "icon": "./assets/images/icon-ios-liquid-glass.icon",
-      "appleTeamId": "MWD5K362T8"
+      "bundleIdentifier": "app.oracle.cinema",
+      "icon": "./assets/oracle/icon.png",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon-android-plain.png",
-        "monochromeImage": "./assets/images/icon-android-themed.png",
-        "backgroundColor": "#2E2E2E"
+        "foregroundImage": "./assets/oracle/icon.png",
+        "backgroundColor": "#101725"
       },
-      "package": "com.fredrikburmester.streamyfin",
+      "package": "app.oracle.cinema",
       "permissions": [
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
         "android.permission.WRITE_SETTINGS",
         "android.permission.ACCESS_FINE_LOCATION"
       ],
-      "blockedPermissions": ["android.permission.ACTIVITY_RECOGNITION"],
-      "googleServicesFile": "./google-services.json"
+      "blockedPermissions": ["android.permission.ACTIVITY_RECOGNITION"]
     },
     "plugins": [
       [
@@ -119,7 +117,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#010101",
-          "image": "./assets/images/icon-ios-plain.png",
+          "image": "./assets/oracle/icon.png",
           "imageWidth": 100
         }
       ],
@@ -154,17 +152,13 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "e79219d1-797f-4fbe-9fa1-cfd360690a68"
       }
     },
-    "owner": "streamyfin",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/e79219d1-797f-4fbe-9fa1-cfd360690a68"
+      "enabled": false
     }
   }
 }

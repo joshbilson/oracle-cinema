@@ -6,6 +6,7 @@ import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persist
 import { onlineManager, QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import * as BackgroundTask from "expo-background-task";
+import Constants from "expo-constants";
 import * as Device from "expo-device";
 import { DarkTheme, ThemeProvider } from "expo-router/react-navigation";
 import { Platform } from "react-native";
@@ -309,13 +310,15 @@ function Layout() {
     }
 
     // only create push token for real devices (pointless for emulators)
-    if (Device.isDevice) {
+    const projectId =
+      Constants.easConfig?.projectId ??
+      Constants.expoConfig?.extra?.eas?.projectId;
+    if (Device.isDevice && projectId) {
       Notifications?.getExpoPushTokenAsync({
-        projectId: "e79219d1-797f-4fbe-9fa1-cfd360690a68",
+        projectId,
       })
         .then((token: ExpoPushToken) => {
           if (token) {
-            console.log("Expo push token obtained:", token.data);
             setExpoPushToken(token);
           }
         })

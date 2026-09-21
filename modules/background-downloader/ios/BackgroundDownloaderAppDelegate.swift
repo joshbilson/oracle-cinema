@@ -7,7 +7,7 @@ public class BackgroundDownloaderAppDelegate: ExpoAppDelegateSubscriber {
     handleEventsForBackgroundURLSession identifier: String,
     completionHandler: @escaping () -> Void
   ) {
-    if identifier == "com.fredrikburmester.streamyfin.backgrounddownloader" {
+    if identifier == "\(Bundle.main.bundleIdentifier ?? "app.oracle.cinema").backgrounddownloader" {
       BackgroundDownloaderModule.setBackgroundCompletionHandler(completionHandler)
     }
   }
