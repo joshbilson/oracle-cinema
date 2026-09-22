@@ -41,3 +41,9 @@ The Seerr 3.4.1 deployment includes the [episode availability patch](server-patc
 Streamyfin and this fork's covered source files are licensed under MPL-2.0. See `LICENSE.txt`. Original copyright and licence notices are preserved. When distributing this app outside the organisation, make the corresponding MPL-covered source, including modifications, available to recipients via the repository above. Third-party components retain their own licences and notices. The native video player includes GPL-3.0 MPVKit; its source and licence are available at https://github.com/mpv-ios/MPVKit/tree/0.41.0-av.
 
 Oracle Cinema's name and original icon distinguish this personal fork from the upstream Streamyfin app. The vector icon can be regenerated with `swift scripts/oracle/generate-icon.swift`.
+
+## Startup recovery (build 4)
+
+The saved session is restored locally before server validation. Keychain migration and the current-user request must not keep the splash screen visible. Startup user validation has a ten-second timeout; the reachability probe resolves within eight seconds even if native fetch does not settle after cancellation.
+
+Validated in the iOS 27 Release simulator using a local proxy that forwarded to Oracle and deliberately held `/Users/Me` and HEAD responses. Build 3 kept a black launch overlay visible. Build 4 exposed navigation, displayed Server Unreachable, allowed Settings to open, and recovered with Retry after the proxy resumed. Run `bun test utils/serverConnection.test.ts` for the bounded reachability checks.

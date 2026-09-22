@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import { apiAtom } from "@/providers/JellyfinProvider";
+import { checkApiReachable } from "@/utils/serverConnection";
 
 interface NetworkStatusContextType {
   isConnected: boolean;
@@ -22,17 +23,6 @@ interface NetworkStatusContextType {
 const NetworkStatusContext = createContext<NetworkStatusContextType | null>(
   null,
 );
-
-async function checkApiReachable(basePath?: string): Promise<boolean> {
-  if (!basePath) return false;
-  try {
-    const url = basePath.endsWith("/") ? basePath : `${basePath}/`;
-    const response = await fetch(url, { method: "HEAD" });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
 
 export function NetworkStatusProvider({ children }: { children: ReactNode }) {
   const [isConnected, setIsConnected] = useState(true);

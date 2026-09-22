@@ -611,6 +611,9 @@ export const JellyfinProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const initializeJellyfin = async () => {
+      // The cached session is restored synchronously above. Neither the
+      // network nor Keychain migration may hold the launch screen open.
+      setInitialLoaded(true);
       if (!jellyfin) return;
 
       try {
@@ -629,7 +632,9 @@ export const JellyfinProvider: React.FC<{ children: ReactNode }> = ({
             setUser(storedUser);
           }
 
-          const response = await getUserApi(apiInstance).getCurrentUser();
+          const response = await getUserApi(apiInstance).getCurrentUser({
+            timeout: 10000,
+          });
           setUser(response.data);
 
           // Migrate current session to secure storage if not already saved
