@@ -14,7 +14,6 @@ import { useSessions, type useSessionsProps } from "@/hooks/useSessions";
 import { userAtom } from "@/providers/JellyfinProvider";
 
 export default function IndexLayout() {
-  const _router = useRouter();
   const [user] = useAtom(userAtom);
   const { t } = useTranslation();
 
@@ -28,17 +27,20 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerRight: () => (
-            <View className='flex flex-row items-center px-2'>
-              {!Platform.isTV && (
-                <>
-                  <Chromecast.Chromecast background='transparent' />
-                  {user?.Policy?.IsAdministrator && <SessionsButton />}
-                  <SettingsButton />
-                </>
-              )}
-            </View>
-          ),
+          headerRight:
+            Platform.OS === "ios"
+              ? undefined
+              : () => (
+                  <View className='flex flex-row items-center px-2'>
+                    {!Platform.isTV && (
+                      <>
+                        <Chromecast.Chromecast background='transparent' />
+                        {user?.Policy?.IsAdministrator && <SessionsButton />}
+                        <SettingsButton />
+                      </>
+                    )}
+                  </View>
+                ),
         }}
       />
       <Stack.Screen
@@ -48,7 +50,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           title: t("home.downloads.downloads_title"),
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -59,7 +62,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -70,15 +74,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => (
-            <Pressable
-              onPress={() => _router.back()}
-              className='pl-0.5'
-              style={{ marginRight: Platform.OS === "android" ? 16 : 0 }}
-            >
-              <Feather name='chevron-left' size={28} color='white' />
-            </Pressable>
-          ),
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -89,7 +86,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -100,7 +98,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -111,7 +110,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -122,7 +122,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -133,7 +134,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -144,7 +146,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -155,15 +158,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => (
-            <Pressable
-              onPress={() => _router.back()}
-              className='pl-0.5'
-              style={{ marginRight: Platform.OS === "android" ? 16 : 0 }}
-            >
-              <Feather name='chevron-left' size={28} color='white' />
-            </Pressable>
-          ),
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -174,7 +170,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -185,7 +182,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -196,7 +194,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -207,7 +206,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -218,7 +218,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -229,7 +230,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       <Stack.Screen
@@ -240,7 +242,8 @@ export default function IndexLayout() {
           headerBlurEffect: "none",
           headerTransparent: Platform.OS === "ios",
           headerShadowVisible: false,
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
         }}
       />
       {Object.entries(nestedTabPageScreenOptions).map(([name, options]) => (
@@ -250,7 +253,8 @@ export default function IndexLayout() {
         name='collections/[collectionId]'
         options={{
           title: "",
-          headerLeft: () => <HeaderBackButton />,
+          headerLeft:
+            Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
           headerShown: !Platform.isTV,
           headerBlurEffect: "prominent",
           headerTransparent: Platform.OS === "ios",
@@ -267,7 +271,7 @@ const SettingsButton = () => {
   return (
     <Pressable
       onPress={() => {
-        router.push("/(auth)/settings");
+        router.push("/(auth)/(tabs)/(home)/settings");
       }}
     >
       <Feather name='settings' color={"white"} size={22} />
@@ -282,7 +286,7 @@ const SessionsButton = () => {
   return (
     <Pressable
       onPress={() => {
-        router.push("/(auth)/sessions");
+        router.push("/(auth)/(tabs)/(home)/sessions");
       }}
       className='mr-4'
     >

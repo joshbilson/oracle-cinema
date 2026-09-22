@@ -12,12 +12,7 @@ import GoogleCast, {
 } from "react-native-google-cast";
 import { RoundButton } from "./RoundButton";
 
-export function Chromecast({
-  width = 48,
-  height = 48,
-  background = "transparent",
-  ...props
-}) {
+export function useChromecastControls() {
   const client = useRemoteMediaClient();
   const castDevice = useCastDevice();
   const devices = useDevices();
@@ -36,6 +31,20 @@ export function Chromecast({
     })();
   }, [client, devices, castDevice, sessionManager, discoveryManager]);
 
+  return useCallback(() => {
+    if (mediaStatus?.currentItemId) CastContext.showExpandedControls();
+    else CastContext.showCastDialog();
+  }, [mediaStatus?.currentItemId]);
+}
+
+export function Chromecast({
+  width = 48,
+  height = 48,
+  background = "transparent",
+  ...props
+}) {
+  const openCastControls = useChromecastControls();
+
   // Android requires the cast button to be present for startDiscovery to work
   const AndroidCastButton = useCallback(
     () =>
@@ -45,14 +54,7 @@ export function Chromecast({
 
   if (Platform.OS === "ios") {
     return (
-      <Pressable
-        className='mr-4'
-        onPress={() => {
-          if (mediaStatus?.currentItemId) CastContext.showExpandedControls();
-          else CastContext.showCastDialog();
-        }}
-        {...props}
-      >
+      <Pressable className='mr-4' onPress={openCastControls} {...props}>
         <AndroidCastButton />
         <Feather name='cast' size={22} color={"white"} />
       </Pressable>
@@ -65,10 +67,7 @@ export function Chromecast({
         size='large'
         className='mr-2'
         background={false}
-        onPress={() => {
-          if (mediaStatus?.currentItemId) CastContext.showExpandedControls();
-          else CastContext.showCastDialog();
-        }}
+        onPress={openCastControls}
         {...props}
       >
         <AndroidCastButton />
@@ -77,14 +76,7 @@ export function Chromecast({
     );
 
   return (
-    <RoundButton
-      size='large'
-      onPress={() => {
-        if (mediaStatus?.currentItemId) CastContext.showExpandedControls();
-        else CastContext.showCastDialog();
-      }}
-      {...props}
-    >
+    <RoundButton size='large' onPress={openCastControls} {...props}>
       <AndroidCastButton />
       <Feather name='cast' size={22} color={"white"} />
     </RoundButton>

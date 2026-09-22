@@ -33,7 +33,7 @@
       },
       "bundleIdentifier": "app.oracle.cinema",
       "icon": "./assets/oracle/icon.png",
-      "buildNumber": "1"
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
