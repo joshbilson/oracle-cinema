@@ -1,8 +1,7 @@
 diff --git a/node_modules/react-native-bottom-tabs/ios/BottomAccessoryProvider.swift b/node_modules/react-native-bottom-tabs/ios/BottomAccessoryProvider.swift
-index 539efee7156599e1fc795e11bf411b7dfaf12ec7..b2af39a2e6b014e9b1ae0a51b21115c19280df69 100644
 --- a/node_modules/react-native-bottom-tabs/ios/BottomAccessoryProvider.swift
 +++ b/node_modules/react-native-bottom-tabs/ios/BottomAccessoryProvider.swift
-@@ -8,7 +8,7 @@ import SwiftUI
+@@ -8,7 +8,7 @@
      self.delegate = delegate
    }
  
@@ -12,10 +11,9 @@ index 539efee7156599e1fc795e11bf411b7dfaf12ec7..b2af39a2e6b014e9b1ae0a51b21115c1
    public func emitPlacementChanged(_ placement: TabViewBottomAccessoryPlacement?) {
      var placementValue = "none"
 diff --git a/node_modules/react-native-bottom-tabs/ios/TabView/NewTabView.swift b/node_modules/react-native-bottom-tabs/ios/TabView/NewTabView.swift
-index 22c52cdf25ad0f7398d89197cb431ca8dc8e0f99..81411376e68803de8bd83515d42565cfa95daf2b 100644
 --- a/node_modules/react-native-bottom-tabs/ios/TabView/NewTabView.swift
 +++ b/node_modules/react-native-bottom-tabs/ios/TabView/NewTabView.swift
-@@ -78,11 +78,11 @@ struct ConditionalBottomAccessoryModifier: ViewModifier {
+@@ -78,11 +78,11 @@
    }
  
    func body(content: Content) -> some View {
@@ -30,7 +28,7 @@ index 22c52cdf25ad0f7398d89197cb431ca8dc8e0f99..81411376e68803de8bd83515d42565cf
        content
          .tabViewBottomAccessory {
            renderBottomAccessoryView()
-@@ -95,7 +95,7 @@ struct ConditionalBottomAccessoryModifier: ViewModifier {
+@@ -95,7 +95,7 @@
  
    @ViewBuilder
    private func renderBottomAccessoryView() -> some View {
@@ -39,7 +37,7 @@ index 22c52cdf25ad0f7398d89197cb431ca8dc8e0f99..81411376e68803de8bd83515d42565cf
      if let bottomAccessoryView {
        if #available(iOS 26.0, *) {
          BottomAccessoryRepresentableView(view: bottomAccessoryView)
-@@ -105,7 +105,7 @@ struct ConditionalBottomAccessoryModifier: ViewModifier {
+@@ -105,7 +105,7 @@
    }
  }
  
@@ -48,16 +46,27 @@ index 22c52cdf25ad0f7398d89197cb431ca8dc8e0f99..81411376e68803de8bd83515d42565cf
  @available(iOS 26.0, *)
  struct BottomAccessoryRepresentableView: PlatformViewRepresentable {
    @Environment(\.tabViewBottomAccessoryPlacement) var tabViewBottomAccessoryPlacement
-@@ -135,3 +135,4 @@ struct BottomAccessoryRepresentableView: PlatformViewRepresentable {
+@@ -135,3 +135,4 @@
    }
  }
  #endif
 +
 diff --git a/node_modules/react-native-bottom-tabs/ios/TabViewImpl.swift b/node_modules/react-native-bottom-tabs/ios/TabViewImpl.swift
-index 72938be90540ea3a483d7db9a80fb74c04d31272..277278ffdd9268a96cb09869eb1d0c0d5e6ad300 100644
 --- a/node_modules/react-native-bottom-tabs/ios/TabViewImpl.swift
 +++ b/node_modules/react-native-bottom-tabs/ios/TabViewImpl.swift
-@@ -281,7 +281,7 @@ extension View {
+@@ -46,8 +46,9 @@
+     tabContent
+       .tabBarMinimizeBehavior(props.minimizeBehavior)
+       #if !os(tvOS) && !os(macOS) && !os(visionOS)
+-        .onTabItemEvent { index, isLongPress in
+-          let item = props.filteredItems[safe: index]
++        .onTabItemEvent { index, identifier, isLongPress in
++          let item = identifier.flatMap { props.filteredItems.findByKey($0) }
++            ?? index.flatMap { props.filteredItems[safe: $0] }
+           guard let key = item?.key else { return false }
+ 
+           if isLongPress {
+@@ -281,7 +282,7 @@
  
    @ViewBuilder
    func tabBarMinimizeBehavior(_ behavior: MinimizeBehavior?) -> some View {
@@ -67,10 +76,9 @@ index 72938be90540ea3a483d7db9a80fb74c04d31272..277278ffdd9268a96cb09869eb1d0c0d
          if let behavior {
            self.tabBarMinimizeBehavior(behavior.convert())
 diff --git a/node_modules/react-native-bottom-tabs/ios/TabViewProps.swift b/node_modules/react-native-bottom-tabs/ios/TabViewProps.swift
-index 9cfb29a983b34d3f84fc7a678d19ef4ff30e0325..6a5854483e66200b71722bbac12e100742222bd3 100644
 --- a/node_modules/react-native-bottom-tabs/ios/TabViewProps.swift
 +++ b/node_modules/react-native-bottom-tabs/ios/TabViewProps.swift
-@@ -6,7 +6,7 @@ internal enum MinimizeBehavior: String {
+@@ -6,7 +6,7 @@
    case onScrollUp
    case onScrollDown
  
@@ -79,3 +87,108 @@ index 9cfb29a983b34d3f84fc7a678d19ef4ff30e0325..6a5854483e66200b71722bbac12e1007
    @available(iOS 26.0, macOS 26.0, *)
    func convert() -> TabBarMinimizeBehavior {
  #if os(macOS)
+diff --git a/node_modules/react-native-bottom-tabs/ios/TabItemEventModifier.swift b/node_modules/react-native-bottom-tabs/ios/TabItemEventModifier.swift
+--- a/node_modules/react-native-bottom-tabs/ios/TabItemEventModifier.swift
++++ b/node_modules/react-native-bottom-tabs/ios/TabItemEventModifier.swift
+@@ -7,9 +7,14 @@
+ #if !os(macOS) && !os(visionOS)
+ 
+ private final class TabBarDelegate: NSObject, UITabBarControllerDelegate {
+-  var onClick: ((_ index: Int) -> Bool)?
++  var onClick: ((_ index: Int?, _ identifier: String?) -> Bool)?
+ 
+   func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
++    if #available(iOS 27.0, *) {
++      // iOS 27 routes SwiftUI TabView selection through shouldSelectTab.
++      return true
++    }
++
+ #if os(iOS)
+     // Handle "More" Tab
+     if tabBarController.moreNavigationController == viewController {
+@@ -21,7 +26,7 @@
+ 
+     if isReselectingSameTab {
+       if let index = tabBarController.viewControllers?.firstIndex(of: viewController) {
+-        _ = onClick?(index)
++        _ = onClick?(index, nil)
+       }
+ 
+       return false
+@@ -31,17 +36,45 @@
+     // See: https://github.com/callstackincubator/react-native-bottom-tabs/issues/383
+     // Due to this, whether the tab prevents default has to be defined statically.
+     if let index = tabBarController.viewControllers?.firstIndex(of: viewController) {
+-      let defaultPrevented = onClick?(index) ?? false
++      let defaultPrevented = onClick?(index, nil) ?? false
+ 
+       return !defaultPrevented
+     }
+ 
+     return false
+   }
++
++  @available(iOS 18.0, tvOS 18.0, visionOS 2.0, *)
++  func tabBarController(_ tabBarController: UITabBarController, shouldSelectTab tab: UITab) -> Bool {
++    guard #available(iOS 27.0, *) else {
++      return true
++    }
++
++    let isReselectingSameTab =
++      tabBarController.selectedTab === tab ||
++      tabBarController.selectedTab?.identifier == tab.identifier
++
++    // Unfortunately, due to iOS 26 new tab switching animations, controlling state from JavaScript is causing significant delays when switching tabs.
++    // See: https://github.com/callstackincubator/react-native-bottom-tabs/issues/383
++    // Due to this, whether the tab prevents default has to be defined statically.
++    let defaultPrevented = onClick?(
++      tabIndex(for: tab, in: tabBarController),
++      tab.identifier
++    ) ?? false
++
++    return isReselectingSameTab ? false : !defaultPrevented
++  }
++
++  @available(iOS 18.0, tvOS 18.0, visionOS 2.0, *)
++  private func tabIndex(for tab: UITab, in tabBarController: UITabBarController) -> Int? {
++    tabBarController.tabs.firstIndex {
++      $0 === tab || $0.identifier == tab.identifier
++    }
++  }
+ }
+ 
+ struct TabItemEventModifier: ViewModifier {
+-  let onTabEvent: (_ key: Int, _ isLongPress: Bool) -> Bool
++  let onTabEvent: (_ index: Int?, _ identifier: String?, _ isLongPress: Bool) -> Bool
+   private let delegate = TabBarDelegate()
+ 
+   func body(content: Content) -> some View {
+@@ -52,8 +85,8 @@
+   }
+ 
+   func handle(tabController: UITabBarController) {
+-    delegate.onClick = { index in
+-      onTabEvent(index, false)
++    delegate.onClick = { index, identifier in
++      onTabEvent(index, identifier, false)
+     }
+     tabController.delegate = delegate
+ 
+@@ -70,7 +103,7 @@
+     }
+ 
+     // Create gesture handler
+-    let handler = LongPressGestureHandler(tabBar: tabController.tabBar) { key, isLongPress in _ = onTabEvent(key, isLongPress) }
++    let handler = LongPressGestureHandler(tabBar: tabController.tabBar) { index, isLongPress in _ = onTabEvent(index, nil, isLongPress) }
+     let gesture = UILongPressGestureRecognizer(target: handler, action: #selector(LongPressGestureHandler.handleLongPress(_:)))
+     gesture.minimumPressDuration = 0.5
+ 
+@@ -122,7 +155,7 @@
+   /**
+    Event for tab items. Returns true if should prevent default (switching tabs).
+    */
+-  func onTabItemEvent(_ handler: @escaping (Int, Bool) -> Bool) -> some View {
++  func onTabItemEvent(_ handler: @escaping (Int?, String?, Bool) -> Bool) -> some View {
+     modifier(TabItemEventModifier(onTabEvent: handler))
+   }
+ }

@@ -47,3 +47,7 @@ Oracle Cinema's name and original icon distinguish this personal fork from the u
 The saved session is restored locally before server validation. Keychain migration and the current-user request must not keep the splash screen visible. Startup user validation has a ten-second timeout; the reachability probe resolves within eight seconds even if native fetch does not settle after cancellation.
 
 Validated in the iOS 27 Release simulator using a local proxy that forwarded to Oracle and deliberately held `/Users/Me` and HEAD responses. Build 3 kept a black launch overlay visible. Build 4 exposed navigation, displayed Server Unreachable, allowed Settings to open, and recovered with Retry after the proxy resumed. Run `bun test utils/serverConnection.test.ts` for the bounded reachability checks.
+
+### iOS 27 tab selection
+
+`patches/react-native-bottom-tabs+1.2.0.patch` also backports [upstream #530](https://github.com/callstack/react-native-bottom-tabs/pull/530). iOS 27 SwiftUI tabs use `shouldSelectTab` instead of the prior view-controller delegate callback. Without this callback, native selection changes but React never mounts the selected tab. The backport retains the existing tvOS compilation fixes and maps tabs by identifier with an index fallback. The existing iOS 26 behavior is preserved. Reassess the patch when upgrading the pinned tab library.
