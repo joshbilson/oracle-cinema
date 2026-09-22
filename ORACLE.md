@@ -30,7 +30,9 @@ This fork includes a CocoaPods deployment-target adjustment for older resource b
 
 Connect to a Jellyfin server using HTTPS. Oracle's deployment uses private Tailscale HTTPS, so the device must be connected to the same tailnet. Movie and TV libraries live on Oracle, not on this Mac. Seerr and the Streamyfin companion plugin supply request discovery and login integration.
 
-Oracle uses Radarr for movies, Sonarr for television and an isolated qBittorrent instance for downloads. Completed imports refresh Jellyfin, and Seerr checks recent library additions every minute. The default request quality profile permits 720p and 1080p. The initial integration catalogue contains only two openly downloadable test titles; a general media source must be configured separately.
+Requests run through Seerr on Oracle, with Radarr, Sonarr, Prowlarr and qBittorrent on the Ultra seedbox. Completed imports refresh Jellyfin. A read-only combined library prefers the Oracle archive and falls back to completed media on Ultra while the background copy runs. The default request quality profile permits 720p and 1080p.
+
+Build 3 adds a permanent Requests tab with inline connection setup and searchable movie/TV discovery. Search uses regular React Native input controls with explicit keyboard dismissal. The installed react-native-screens 4.25.2 has an iOS stack-pop/tab-switch hit-testing regression (upstream issue #4361); `utils/navigationCompatibility.ts` disables its experimental iOS transition interactions before Expo Router mounts. Reassess that workaround when upgrading Screens. Seerr search terms are encoded centrally in the API client because Seerr validates the decoded query parameter as a URI-encoded value.
 
 The Seerr 3.4.1 deployment includes the [episode availability patch](server-patches/README.md), which makes recent episode and season additions update request availability. Keep this patch when rebuilding that server version; do not apply it blindly to a newer release.
 

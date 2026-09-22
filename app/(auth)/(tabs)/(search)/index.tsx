@@ -7,20 +7,26 @@ import { useAsyncDebouncer } from "@tanstack/react-pacer";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Image } from "expo-image";
-import { useLocalSearchParams, useNavigation, useSegments } from "expo-router";
+import { useLocalSearchParams, useSegments } from "expo-router";
 import { useAtom } from "jotai";
 import { orderBy, uniqBy } from "lodash";
 import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { Platform, ScrollView, TouchableOpacity, View } from "react-native";
+import {
+  Keyboard,
+  Platform,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ContinueWatchingPoster from "@/components/ContinueWatchingPoster";
 import { Text } from "@/components/common/Text";
@@ -45,7 +51,6 @@ import { useJellyseerr } from "@/hooks/useJellyseerr";
 import { useTVItemActionModal } from "@/hooks/useTVItemActionModal";
 import { apiAtom, userAtom } from "@/providers/JellyfinProvider";
 import { useSettings } from "@/utils/atoms/settings";
-import { eventBus } from "@/utils/eventBus";
 import { getPrimaryImageUrl } from "@/utils/jellyfin/image/getPrimaryImageUrl";
 import { MediaType } from "@/utils/jellyseerr/server/constants/media";
 import type {
@@ -284,48 +289,7 @@ export default function SearchPage() {
     [api, user?.Id],
   );
 
-  type HeaderSearchBarRef = {
-    focus: () => void;
-    blur: () => void;
-    setText: (text: string) => void;
-    clearText: () => void;
-    cancelSearch: () => void;
-  };
-
-  const searchBarRef = useRef<HeaderSearchBarRef>(null);
-  const navigation = useNavigation();
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerSearchBarOptions: {
-        ref: searchBarRef,
-        placeholder: t("search.search"),
-        onChangeText: (e: any) => {
-          router.setParams({ q: "" });
-          setSearch(e.nativeEvent.text);
-        },
-        hideWhenScrolling: false,
-        autoFocus: false,
-        // Android: placeholder and icon color
-        hintTextColor: "#fff",
-        headerIconColor: "#fff",
-      },
-    });
-  }, [navigation]);
-
-  useEffect(() => {
-    const unsubscribe = eventBus.on("searchTabPressed", () => {
-      // Screen not active
-      if (!searchBarRef.current) {
-        return;
-      }
-      // Screen is active, focus search bar
-      searchBarRef.current?.focus();
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
+  const searchInputRef = useRef<TextInput>(null);
 
   const { data: movies, isFetching: l1 } = useQuery({
     queryKey: ["search", "movies", debouncedSearch],
@@ -470,7 +434,7 @@ export default function SearchPage() {
       queryKey: ["search", "jellyseerr", "tv", debouncedSearch],
       queryFn: async () => {
         const params = {
-          query: new URLSearchParams(debouncedSearch || "").toString(),
+          query: debouncedSearch.trim(),
         };
         return await Promise.all([
           jellyseerrApi?.search({ ...params, page: 1 }),
@@ -632,6 +596,7 @@ export default function SearchPage() {
   return (
     <ScrollView
       keyboardDismissMode='on-drag'
+      keyboardShouldPersistTaps='handled'
       contentInsetAdjustmentBehavior='automatic'
       contentContainerStyle={{
         paddingLeft: insets.left,
@@ -643,6 +608,48 @@ export default function SearchPage() {
         className='flex flex-col'
         style={{ paddingTop: Platform.OS === "android" ? 10 : 0 }}
       >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginHorizontal: 16,
+            marginVertical: 12,
+            gap: 8,
+          }}
+        >
+          <TextInput
+            ref={searchInputRef}
+            accessibilityLabel='Search library'
+            placeholder='Search your library'
+            placeholderTextColor='#a3a3a3'
+            value={search}
+            onChangeText={(value) => {
+              router.setParams({ q: "" });
+              setSearch(value);
+            }}
+            onSubmitEditing={() => Keyboard.dismiss()}
+            returnKeyType='search'
+            autoCorrect={false}
+            clearButtonMode='while-editing'
+            style={{
+              flex: 1,
+              minHeight: 48,
+              borderRadius: 12,
+              paddingHorizontal: 14,
+              backgroundColor: "#262626",
+              color: "white",
+              fontSize: 16,
+            }}
+          />
+          <TouchableOpacity
+            accessibilityRole='button'
+            accessibilityLabel='Dismiss keyboard'
+            onPress={() => Keyboard.dismiss()}
+            style={{ padding: 10 }}
+          >
+            <Text>Done</Text>
+          </TouchableOpacity>
+        </View>
         {jellyseerrApi && (
           <View className='pl-4 pr-4 flex flex-row'>
             <SearchTabButtons
@@ -946,7 +953,7 @@ export default function SearchPage() {
                 <TouchableOpacity
                   onPress={() => {
                     setSearch(e);
-                    searchBarRef.current?.setText(e);
+                    searchInputRef.current?.focus();
                   }}
                   key={e}
                   className='mb-2'

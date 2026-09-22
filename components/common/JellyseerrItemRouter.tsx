@@ -36,7 +36,12 @@ export const TouchableJellyseerrRouter: React.FC<PropsWithChildren<Props>> = ({
 
   const from = (segments as string[])[2] || "(home)";
 
-  if (from === "(home)" || from === "(search)" || from === "(libraries)")
+  if (
+    from === "(home)" ||
+    from === "(search)" ||
+    from === "(libraries)" ||
+    from === "(requests)"
+  )
     return (
       <TouchableOpacity
         onPress={() => {

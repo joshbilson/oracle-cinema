@@ -127,11 +127,12 @@ const HomeMobile = () => {
       });
       return;
     }
+    if (Platform.OS === "ios") return;
     navigation.setOptions({
       headerLeft: () => (
         <Pressable
           onPress={() => {
-            router.push("/(auth)/downloads");
+            router.push("/(auth)/(tabs)/(home)/downloads");
           }}
           style={{ marginRight: Platform.OS === "android" ? 16 : 0 }}
         >
@@ -529,7 +530,7 @@ const HomeMobile = () => {
           {!Platform.isTV && (
             <Button
               color='purple'
-              onPress={() => router.push("/(auth)/downloads")}
+              onPress={() => router.push("/(auth)/(tabs)/(home)/downloads")}
               justify='center'
               iconRight={
                 <Ionicons name='arrow-forward' size={20} color='white' />

@@ -2,13 +2,14 @@ import { orderBy, uniqBy } from "lodash";
 import type React from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { View, type ViewProps } from "react-native";
+import { TouchableOpacity, View, type ViewProps } from "react-native";
 import {
   useAnimatedReaction,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import Discover from "@/components/jellyseerr/discover/Discover";
+import useRouter from "@/hooks/useAppRouter";
 import { useJellyseerr } from "@/hooks/useJellyseerr";
 import { MediaType } from "@/utils/jellyseerr/server/constants/media";
 import type {
@@ -41,6 +42,7 @@ export const JellyserrIndexPage: React.FC<Props> = ({
   order,
 }) => {
   const { jellyseerrApi } = useJellyseerr();
+  const router = useRouter();
   const opacity = useSharedValue(1);
   const { t } = useTranslation();
 
@@ -48,6 +50,8 @@ export const JellyserrIndexPage: React.FC<Props> = ({
     data: jellyseerrDiscoverSettings,
     isFetching: f1,
     isLoading: l1,
+    error: discoveryError,
+    refetch: retryDiscovery,
   } = useReactNavigationQuery({
     queryKey: ["search", "jellyseerr", "discoverSettings", searchQuery],
     queryFn: async () => jellyseerrApi?.discoverSettings(),
@@ -58,11 +62,13 @@ export const JellyserrIndexPage: React.FC<Props> = ({
     data: jellyseerrResults,
     isFetching: f2,
     isLoading: l2,
+    error: searchError,
+    refetch: retrySearch,
   } = useReactNavigationQuery({
     queryKey: ["search", "jellyseerr", "results", searchQuery],
     queryFn: async () => {
       const params = {
-        query: new URLSearchParams(searchQuery || "").toString(),
+        query: searchQuery.trim(),
       };
       return await Promise.all([
         jellyseerrApi?.search({ ...params, page: 1 }),
@@ -143,6 +149,41 @@ export const JellyserrIndexPage: React.FC<Props> = ({
       ),
     [jellyseerrResults, sortingType, order],
   );
+
+  if (discoveryError || searchError) {
+    return (
+      <View style={{ padding: 20, gap: 12 }}>
+        <Text style={{ fontSize: 18, fontWeight: "600" }}>
+          Requests could not load
+        </Text>
+        <Text>
+          Check that Tailscale is connected, then retry. If your session
+          expired, reconnect in request settings.
+        </Text>
+        <TouchableOpacity
+          accessibilityRole='button'
+          onPress={() => {
+            if (searchQuery.length) retrySearch();
+            else retryDiscovery();
+          }}
+          style={{ padding: 12 }}
+        >
+          <Text>Retry</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          accessibilityRole='button'
+          onPress={() =>
+            router.push(
+              "/(auth)/(tabs)/(home)/settings/plugins/jellyseerr/page",
+            )
+          }
+          style={{ padding: 12 }}
+        >
+          <Text>Request settings</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (!searchQuery.length)
     return (

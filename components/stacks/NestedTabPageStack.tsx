@@ -11,7 +11,7 @@ export const commonScreenOptions: ICommonScreenOptions = {
   headerTransparent: Platform.OS === "ios",
   headerShadowVisible: false,
   headerBlurEffect: "none",
-  headerLeft: () => <HeaderBackButton />,
+  headerLeft: Platform.OS === "ios" ? undefined : () => <HeaderBackButton />,
 };
 
 const routes = [

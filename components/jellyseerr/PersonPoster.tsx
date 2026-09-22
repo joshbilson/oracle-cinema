@@ -25,7 +25,12 @@ const PersonPoster: React.FC<Props & ViewProps> = ({
   const segments = useSegments();
   const from = (segments as string[])[2] || "(home)";
 
-  if (from === "(home)" || from === "(search)" || from === "(libraries)")
+  if (
+    from === "(home)" ||
+    from === "(search)" ||
+    from === "(libraries)" ||
+    from === "(requests)"
+  )
     return (
       <TouchableOpacity
         onPress={() =>

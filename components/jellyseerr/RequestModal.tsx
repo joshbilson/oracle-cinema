@@ -48,6 +48,7 @@ const RequestModal = forwardRef<
       userId: jellyseerrUser?.id,
     });
 
+    const [submitting, setSubmitting] = useState(false);
     const [qualityProfileOpen, setQualityProfileOpen] = useState(false);
     const [rootFolderOpen, setRootFolderOpen] = useState(false);
     const [tagsOpen, setTagsOpen] = useState(false);
@@ -258,7 +259,9 @@ const RequestModal = forwardRef<
       [users, jellyseerrUser, requestOverrides.userId],
     );
 
-    const request = useCallback(() => {
+    const request = useCallback(async () => {
+      if (submitting) return;
+      setSubmitting(true);
       const body = {
         is4k: defaultService?.is4k || defaultServiceDetails?.server.is4k,
         profileId: defaultProfile?.id,
@@ -270,12 +273,23 @@ const RequestModal = forwardRef<
 
       writeDebugLog("Sending Jellyseerr advanced request", body);
 
-      requestMedia(
-        seasonTitle ? `${title}, ${seasonTitle}` : title,
-        body,
-        onRequested,
-      );
+      try {
+        await requestMedia(
+          seasonTitle ? `${title}, ${seasonTitle}` : title,
+          body,
+          onRequested,
+        );
+      } finally {
+        setSubmitting(false);
+      }
     }, [
+      submitting,
+      requestMedia,
+      title,
+      seasonTitle,
+      onRequested,
+      defaultService,
+      defaultServiceDetails,
       requestBody,
       requestOverrides,
       defaultProfile,
@@ -426,7 +440,12 @@ const RequestModal = forwardRef<
                 </>
               )}
             </View>
-            <Button className='mt-auto' onPress={request} color='purple'>
+            <Button
+              className='mt-auto'
+              onPress={request}
+              color='purple'
+              loading={submitting}
+            >
               {t("jellyseerr.request_button")}
             </Button>
           </View>

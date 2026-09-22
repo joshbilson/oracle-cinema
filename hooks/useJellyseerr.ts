@@ -229,7 +229,11 @@ export class JellyseerrApi {
 
   async search(params: SearchParams): Promise<SearchResults> {
     return this.axios
-      ?.get<SearchResults>(Endpoints.API_V1 + Endpoints.SEARCH, { params })
+      ?.get<SearchResults>(Endpoints.API_V1 + Endpoints.SEARCH, {
+        // Seerr validates the decoded query parameter as an encoded URI value.
+        // Encode the term once here; Axios performs the outer URL encoding.
+        params: { ...params, query: encodeURIComponent(params.query) },
+      })
       .then(({ data }) => data);
   }
 
@@ -455,33 +459,44 @@ export const useJellyseerr = () => {
 
   const requestMedia = useCallback(
     (title: string, request: MediaRequestBody, onSuccess?: () => void) => {
-      jellyseerrApi?.request?.(request)?.then(async (mediaRequest) => {
-        await queryClient.invalidateQueries({
-          queryKey: ["search", "jellyseerr"],
-        });
+      if (!jellyseerrApi) {
+        toast.error("Connect Requests before submitting a request.");
+        return Promise.resolve();
+      }
+      return jellyseerrApi
+        .request(request)
+        .then(async (mediaRequest) => {
+          await queryClient.invalidateQueries({
+            queryKey: ["search", "jellyseerr"],
+          });
 
-        switch (mediaRequest.status) {
-          case MediaRequestStatus.PENDING:
-          case MediaRequestStatus.APPROVED:
-            toast.success(
-              t("jellyseerr.toasts.requested_item", { item: title }),
-            );
-            onSuccess?.();
-            break;
-          case MediaRequestStatus.DECLINED:
-            toast.error(
-              t("jellyseerr.toasts.you_dont_have_permission_to_request"),
-            );
-            break;
-          case MediaRequestStatus.FAILED:
-            toast.error(
-              t("jellyseerr.toasts.something_went_wrong_requesting_media"),
-            );
-            break;
-        }
-      });
+          switch (mediaRequest.status) {
+            case MediaRequestStatus.PENDING:
+            case MediaRequestStatus.APPROVED:
+              toast.success(
+                t("jellyseerr.toasts.requested_item", { item: title }),
+              );
+              onSuccess?.();
+              break;
+            case MediaRequestStatus.DECLINED:
+              toast.error(
+                t("jellyseerr.toasts.you_dont_have_permission_to_request"),
+              );
+              break;
+            case MediaRequestStatus.FAILED:
+              toast.error(
+                t("jellyseerr.toasts.something_went_wrong_requesting_media"),
+              );
+              break;
+          }
+        })
+        .catch(() => {
+          toast.error(
+            "Request could not be sent. Check Tailscale and your request connection, then retry.",
+          );
+        });
     },
-    [jellyseerrApi],
+    [jellyseerrApi, queryClient],
   );
 
   const isJellyseerrMovieOrTvResult = (

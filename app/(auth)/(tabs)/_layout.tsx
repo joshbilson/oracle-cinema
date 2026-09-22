@@ -76,12 +76,21 @@ export default function TabLayout() {
           })}
           name='(search)'
           options={{
-            role: "search",
             title: t("tabs.search"),
             tabBarIcon:
               Platform.OS === "android"
                 ? (_e) => require("@/assets/icons/magnifyingglass.png")
                 : (_e) => ({ sfSymbol: "magnifyingglass" }),
+          }}
+        />
+        <NativeTabs.Screen
+          name='(requests)'
+          options={{
+            title: "Requests",
+            tabBarIcon:
+              Platform.OS === "android"
+                ? () => require("@/assets/icons/list.png")
+                : () => ({ sfSymbol: "plus.rectangle.on.rectangle" }),
           }}
         />
         <NativeTabs.Screen
